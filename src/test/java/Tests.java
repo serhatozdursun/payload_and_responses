@@ -35,6 +35,7 @@ public class Tests {
         given()
                 .basePath("{version}/pet")
                 .pathParam("version", "v2")
+                .filter(new RestReqFilter())
                 .contentType(ContentType.JSON)
                 .body(payload)
                 .when()
@@ -79,5 +80,23 @@ public class Tests {
         var tagId = response.jsonPath().getInt("tags[0].id");
         assertEquals(tagId, 2);
 
+    }
+
+    @Test
+    public void cURLExample() {
+        var fileHelper = new FileHelper();
+        int desiredStatusCode = 200;
+        var payload = fileHelper.getFile("pet.json");
+
+        given()
+                .basePath("{version}/pet")
+                .pathParam("version", "v2")
+                .filter(new RestReqFilter(desiredStatusCode))
+                .contentType(ContentType.JSON)
+                .body(payload)
+                .when()
+                .post()
+                .then()
+                .statusCode(desiredStatusCode);
     }
 }
